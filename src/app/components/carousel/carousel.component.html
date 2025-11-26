@@ -1,0 +1,72 @@
+<div
+  class="relative w-full max-w-6xl mx-auto bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 mb-8"
+> <!-- Contenedor principal de la tarjeta/carrusel: centrado, ancho máximo, fondo blanco, bordes redondeados y sombras con transición -->
+  <div class="relative h-64 md:h-80 lg:h-96 overflow-hidden"> <!-- Área visible del carrusel con altura responsiva y contenido oculto que se desborda -->
+    @for(image of images; track $index){ <!-- Bucle Angular para iterar sobre el arreglo 'images' usando el índice como clave -->
+    <div 
+      class="absolute inset-0 transition-opacity duration-500 ease-in-out"  
+      [class.opacity-100]="$index === currentIndex" 
+      [class.opacity-0]="$index !== currentIndex" 
+    > <!-- Cada slide ocupa toda el área y anima la opacidad --> <!-- Activa opacidad completa si es la imagen actual -->
+    <!-- Oculta (opacidad 0) si no es la imagen actual --> <!-- Contenedor de una diapositiva -->
+      @if (image.loading) { <!-- Si la imagen está en estado 'loading' muestra un spinner -->
+      <div class="w-full h-full bg-gray-100 flex items-center justify-center"> <!-- Área de espera con fondo gris y contenido centrado -->
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"
+        ></div> <!-- Spinner circular indicando carga -->
+      </div>
+      } @if (image.loaded) { <!-- Si la imagen ya cargó, muéstrala -->
+      <img
+        [src]="image.src" 
+        [alt]="image.alt" 
+        class="w-full h-full object-contain"
+      /> <!-- Fuente de la imagen dinámica --> <!-- Texto alternativo dinámico -->
+      <!-- Imagen que cubre todo el contenedor -->
+      } @if(!image.loaded && !image.loading){ <!-- Si no está cargando ni cargada, muestra un placeholder vacío -->
+      <div
+        class="w-full h-full bg-gray-100 flex items-center justify-center"
+      ></div> <!-- Placeholder silencioso -->
+      }
+    </div>
+    } @if (showControls) { <!-- Si 'showControls' es verdadero, se muestran los botones de navegación -->
+    <button
+      (click)="prevImage()" 
+      class="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-700 rounded-full shadow-md transition-all duration-200 hover:scale-110"
+    > <!-- Al hacer clic, va a la imagen anterior --> <!-- Botón izquierdo posicionado al centro vertical con estilos y efecto hover -->
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      > <!-- Ícono de flecha izquierda -->
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M15 19l-7-7 7-7"
+        ></path>
+      </svg>
+    </button>
+
+    <button 
+      (click)="nextImage()"  
+      class="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-700 rounded-full shadow-md transition-all duration-200 hover:scale-110"
+    > <!-- Al hacer clic, avanza a la siguiente imagen --> <!-- Botón derecho con estilos y efecto hover -->
+      <svg
+        class="w-5 h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      > <!-- Ícono de flecha derecha -->
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5l7 7-7 7"
+        ></path>
+      </svg>
+    </button> 
+
+    } <!-- Fin de controles condicionales -->
+  </div>
+</div>
