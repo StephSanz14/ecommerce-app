@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const PaymentMethodTypeSchema = z.enum([
+export const PaymentMethodTypeSchema = z.enum([
   'credit_card',
   'debit_card',
   'paypal',
@@ -8,31 +8,51 @@ const PaymentMethodTypeSchema = z.enum([
   'cash_on_delivery',
 ]);
 
+export type PaymentMethodType = z.infer<typeof PaymentMethodTypeSchema>;
+
 export const PaymentMethodSchema = z.object({
-  _id: z.string(),
+  _id: z.string().min(1, 'El ID es requerido'),
+
   type: PaymentMethodTypeSchema,
+
   cardNumber: z
     .string()
-    .regex(/^\d{16}$/)
-    .optional(),
-  cardHolderName: z.string().optional(),
-  expiryDate: z.string().optional(),
+    .optional()
+    .nullable(),
+
+  cardHolderName: z.string().optional().nullable(),
+
+  expiryDate: z.string().optional().nullable(),
+
   paypalEmail: z
     .string()
-    .regex(/^\S+@\S+\.\S+$/)
+    .optional()
+    .nullable(),
+
+  bankName: z
+    .string()
+
     .optional(),
-  bankName: z.string().optional(),
-  accountNumber: z.string().min(8).optional(),
+
+  accountNumber: z
+    .string()
+    .optional()
+    .nullable(),
+
   isDefault: z.boolean(),
   isActive: z.boolean(),
 });
 
+export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;
+
 export const PaymentMethodArraySchema = z.array(PaymentMethodSchema);
 
-export type PaymentMethod = z.infer<typeof PaymentMethodSchema>
-
-export const CreatePaymentMethodSchema = PaymentMethodSchema.omit({_id: true})
+export const CreatePaymentMethodSchema = PaymentMethodSchema.omit({
+  _id: true,
+});
 export type CreatePaymentMethod = z.infer<typeof CreatePaymentMethodSchema>;
 
-export const UpdatePaymentMethodSchema = PaymentMethodSchema.partial().required({_id: true});
+export const UpdatePaymentMethodSchema = PaymentMethodSchema.partial().required(
+  { _id: true }
+);
 export type UpdatePaymentMethod = z.infer<typeof UpdatePaymentMethodSchema>;

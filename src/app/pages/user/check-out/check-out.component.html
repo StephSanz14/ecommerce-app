@@ -1,0 +1,66 @@
+@if (cartSignal(); as cart) {
+  <div class="max-w-6xl mx-auto py-8 px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div>
+        Direcciones de envío
+      </div>
+
+      <div>
+        @if (paymenthMethods$ | async; as payments) {
+          <app-payment-methods-list
+            [paymentMethods]="payments"
+            [isSelectable]="true"
+            [selectedId]="paymenthMethodId || null"
+            (select)="onPaymenthMethodSelected($event)">
+          </app-payment-methods-list>
+        }
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-white shadow rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Resumen</h2>
+
+        <div class="divide-y">
+          @for (item of cart.products; track item) {
+            <div class="py-2 flex items-center justify-between text-sm">
+              <div class="flex-1 pr-2">
+                <p class="font-medium line-clamp-1">{{ item.product.name }}</p>
+                <p class="text-gray-500">{{ item.quantity }}</p>
+              </div>
+              <div class="font-semibold">
+                {{ item.product.price * item.quantity | currency }}
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="border-t mt-4 pt-4 flex justify-between font-bold text-lg">
+          <span>Total</span>
+          <span>{{ total() | currency }}</span>
+        </div>
+
+        <button
+          (click)="submitOrder()"
+          [disabled]="Loading()"
+          class="w-full mt-4 bg-green-600 text-white py-3 rounded hover:bg-green-700 disabled:opacity-50">
+          {{ Loading() ? 'procesando...' : 'Confirmar pedido' }}
+        </button>
+
+        @if (errorMsg()) {
+          <p class="text-red-600 text-sm mt-2">{{ errorMsg() }}</p>
+        }
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="text-center py-20">
+    <p class="text-gray-600 mb-4">No hay productos en el carrito</p>
+    <a
+      routerLink="/user/cart"
+      class="inline-block bg-blue-600 text-white px-6 py-3 rounded hover:bg-green-700 disabled:opacity-50">
+      Ver carrito
+    </a>
+  </div>
+}
+

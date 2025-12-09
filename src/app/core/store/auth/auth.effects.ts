@@ -15,7 +15,9 @@ export class AuthEffects {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
-private baseUrl = `${environment.BACK_URL}/auth`;
+  // private readonly baseUrl = 'http://localhost:3000/api/auth';
+  private readonly baseUrl = `${environment.BACK_URL}/auth`;
+
   initializeAuth$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.initializeAuth),
@@ -136,7 +138,7 @@ private baseUrl = `${environment.BACK_URL}/auth`;
   logout$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(AuthActions.Logout),
+        ofType(AuthActions.logout),
         tap(() => {
           // Limpiar localStorage
           localStorage.removeItem('token');
@@ -156,20 +158,18 @@ private baseUrl = `${environment.BACK_URL}/auth`;
     this.actions$.pipe(
       ofType(AuthActions.refreshToken),
       switchMap(({ refreshToken }) =>
-        this.http.post<{ token: string; refreshToken: string }>(
+        this.http.post<{ token: string }>(
           `${this.baseUrl}/refresh-token`,
           { token: refreshToken }
         ).pipe(
           map((response)=> {
             // Actualizar tokens en localStorage
               localStorage.setItem('token', response.token);
-              localStorage.setItem('refreshToken', response.refreshToken);
 
               // Decodificar nuevo token
               const decoded = jwtDecode<decodedToken>(response.token);
               return AuthActions.refreshTokenSuccess({
                 token: response.token,
-                refreshToken: response.refreshToken,
                 decodedToken: decoded,
               });
           }),

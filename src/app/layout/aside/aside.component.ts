@@ -7,7 +7,7 @@ import { AdminDirective } from '../../core/directives/admin.directive';
 import { Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { selectDecodedToken } from '../../core/store/auth/auth.selectors';
-import { Logout } from '../../core/store/auth/auth.actions';
+import { logout } from '../../core/store/auth/auth.actions';
 import { decodedToken } from '../../core/types/Token';
 
 @Component({
@@ -54,6 +54,6 @@ export class AsideComponent implements OnInit {
   }
   
   logout(){
-    this.store.dispatch(Logout());
+    this.store.dispatch(logout());
   }
 }

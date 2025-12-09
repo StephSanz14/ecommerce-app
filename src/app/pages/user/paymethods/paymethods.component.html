@@ -1,1 +1,38 @@
-<p>paymethods works!</p>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Métodos de Pago</h1>
+    <button 
+      (click)="onAddNew()"
+      class="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded transition-colors duration-200 flex items-center gap-2">
+      <span class="text-xl">+</span> Agregar Nuevo
+    </button>
+  </div>
+
+  @if (paymentMethods$ | async; as paymentMethods) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2">
+        <app-payment-methods-list 
+          [paymentMethods]="paymentMethods"
+          [isEditable]="true"
+          (edit)="onEdit($event)"
+          (delete)="onDelete($event)">
+        </app-payment-methods-list>
+      </div>
+
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">
+            {{ isEditing ? 'Editar Método de Pago' : 'Nuevo Método de Pago' }}
+          </h2>
+          <app-payment-form 
+            [payment]="selectedPaymentMethod"
+            [isEditMode]="isEditing" 
+            (paymentSaved)="onPaymentSaved($event)">
+          </app-payment-form>
+        </div>
+      </div>
+    </div>    
+  }
+</div>
+

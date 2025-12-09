@@ -1,0 +1,13 @@
+<div class="grid gap-4">
+    @for (item of paymentMethods; track $index) {
+        <app-payment-methods-card 
+            [paymentMethod]="item"
+            [isEditable]="isEditable"
+            [isSelectable]="isSelectable"
+            [isSelected]="selectedId === item._id"
+            (edit)="onEdit($event)"
+            (delete)="onDelete($event)"
+            (select)="onSelect($event)">
+        </app-payment-methods-card>
+    }
+</div>

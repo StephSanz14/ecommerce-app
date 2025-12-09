@@ -9,7 +9,7 @@ export const login = createAction(
 
 export const loginSuccess = createAction(
   '[Auth] Login Success',
-  props<{ token: string; refreshToken: string; decodedToken: decodedToken }>()
+  props<{ token:string; refreshToken: string; decodedToken: decodedToken }>()
 );
 
 export const loginFailure = createAction(
@@ -17,7 +17,7 @@ export const loginFailure = createAction(
   props<{ error: string }>()
 );
 
-export const Logout = createAction('[Auth] Logout');
+export const logout = createAction('[Auth] Logout');
 
 export const register = createAction(
   '[Auth] Register',
@@ -37,7 +37,7 @@ export const refreshToken = createAction(
 
 export const refreshTokenSuccess = createAction(
   '[Auth] Refresh Token Success',
-  props<{ token: string; refreshToken: string; decodedToken: decodedToken }>()
+  props<{ token: string, decodedToken: decodedToken }>()
 );
 
 export const refreshTokenFailure = createAction(

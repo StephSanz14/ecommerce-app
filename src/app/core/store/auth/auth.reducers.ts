@@ -14,7 +14,7 @@ export const authReducer = createReducer(
     on(AuthActions.initializeAuthSuccess, (state, { decodedToken }) => ({
         ...state,
         decodedToken,
-        isAuthenticated: true,  
+        isAuthenticated: true,
         isLoading: false,
     })),
 
@@ -23,7 +23,7 @@ export const authReducer = createReducer(
         token: null,
         refreshToken: null,
         decodedToken: null,
-        isAuthenticated: false,  
+        isAuthenticated: false,  // ✅ Corregido el typo
         isLoading: false,
     })),
 
@@ -39,7 +39,7 @@ export const authReducer = createReducer(
         token,
         refreshToken,
         decodedToken,
-        isAuthenticated: true,  
+        isAuthenticated: true, 
         isLoading: false,
         error: null,
     })),
@@ -48,7 +48,7 @@ export const authReducer = createReducer(
         ...state,
         isLoading: false,
         error,
-        isAuthenticated: false  
+        isAuthenticated: false 
     })),
 
     // Register
@@ -70,11 +70,9 @@ export const authReducer = createReducer(
         error,
     })),
 
-    // Refresh Token
-    on(AuthActions.refreshTokenSuccess, (state, { token, refreshToken, decodedToken }) => ({
+    on(AuthActions.refreshTokenSuccess, (state, { token, decodedToken }) => ({
         ...state,
         token,
-        refreshToken,
         decodedToken,
         isAuthenticated: true,
         isLoading: false,
@@ -92,7 +90,7 @@ export const authReducer = createReducer(
     })),
 
     // Logout
-    on(AuthActions.Logout, () => ({
+    on(AuthActions.logout, () => ({
         ...initialAuthState,
         token: null,
         refreshToken: null,

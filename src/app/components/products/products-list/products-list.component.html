@@ -6,7 +6,7 @@
   class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 my-10 gap-3 md:gap-4 max-w-4xl mx-auto"
 >
 @defer (on viewport; prefetch on hover) { 
-    @for (product of productResponse?.products; track product._id) {
+    @for (product of productResponse?.products ?? []; track product._id) {
         <app-products-card [product]="product"></app-products-card>
     }
 } @loading (minimum 300ms) {

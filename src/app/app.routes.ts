@@ -40,4 +40,9 @@ export const routes: Routes = [
     canActivate:[authGuard]
   },
 
+  {
+    path:'thank-you-page',
+    loadComponent:() => import('../app/pages/thank-you/thank-you.component').then(c=> c.ThankYouComponent)
+  }
+
 ];

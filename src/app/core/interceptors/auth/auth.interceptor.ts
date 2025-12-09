@@ -45,6 +45,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     .select(selectToken)
     .pipe(take(1))
     .subscribe((token) => (currentToken = token ?? ''));
+    console.log(currentToken);
 
   const headers = new HttpHeaders({
     'Content-Type': 'application/json',

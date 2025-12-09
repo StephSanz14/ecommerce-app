@@ -6,7 +6,7 @@ export interface AuthState{
     decodedToken: decodedToken | null;
     isAuthenticated: boolean;
     isLoading: boolean;
-    error: string | null;
+    error: string | null; 
 }
 
 export const initialAuthState: AuthState = {

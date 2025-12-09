@@ -1,12 +1,17 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, switchMap, take, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import {
-  CreatePaymentMethod,
-  PaymentMethod,
-  PaymentMethodArraySchema,
-  UpdatePaymentMethod,
-} from '../../types/PaymentMethod';
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
+import { PaymentMethod, PaymentMethodArraySchema } from '../../types/PaymentMethod';
+import { ToastService } from '../toast/toast.service';
 import { Store } from '@ngrx/store';
 import { selectUserId } from '../../store/auth/auth.selectors';
 import { environment } from '../../../../environments/environment';
@@ -14,65 +19,111 @@ import { environment } from '../../../../environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class PaymentMethodsService {
+export class PaymentService {
+  // private baseUrl = `http://localhost:3000/api/payment-methods`;
   private baseUrl = `${environment.BACK_URL}/payment-methods`;
-  private paymentSubject = new BehaviorSubject<PaymentMethod[]>([]);
-  private readonly payments$ = this.paymentSubject.asObservable();
+  private paymetMethodSubject = new BehaviorSubject<PaymentMethod | null>(null);
+  private paymetMethodListSubject = new BehaviorSubject<PaymentMethod[]>([]);
+  paymetMethod$ = this.paymetMethodSubject.asObservable();
+  paymetMethods$ = this.paymetMethodListSubject.asObservable();
 
-  constructor(private http: HttpClient, private store: Store) {}
-  getUserId(): string {
-    let userId = '';
+  constructor(
+    private http: HttpClient,
+    private store: Store,
+    private toast: ToastService
+  ) {
+    this.loadPayMethods();
+  }
+
+  getUserId() {
+    let id = '';
     this.store
       .select(selectUserId)
       .pipe(take(1))
-      .subscribe({ next: (id) => (userId = id ?? '') });
-    return userId;
+      .subscribe((userId) => (id = userId ?? ''));
+
+    return id;
   }
 
-  getPaymentMethodsByUser(userId: string): Observable<PaymentMethod[]> {
-    return this.http.get(`${this.baseUrl}/user/${userId}`).pipe(
+  loadPayMethods() {
+    const id = this.getUserId()
+    console.log('Loading payment methods for user ID:', id);
+    if (!id) {
+      console.log('No user ID found, setting empty array');
+      this.paymetMethodListSubject.next([]);
+      return;
+    }
+    this.getPayMethodbyUser(id).subscribe({
+      next: (data) => {
+        console.log('Payment methods loaded:', data);
+        this.paymetMethodListSubject.next(data);
+      },
+      error: (error) => {
+        console.error('Error loading payment methods:', error);
+        this.paymetMethodListSubject.next([]);
+      },
+    });
+  }
+
+  getPayMethodbyUser(id: string): Observable<PaymentMethod[]> {
+    return this.http.get(`${this.baseUrl}/user/${id}`).pipe(
       map((data) => {
         const response = PaymentMethodArraySchema.safeParse(data);
         if (!response.success) {
           console.log(response.error);
           return [];
         }
+
         return response.data;
       })
     );
   }
-
-  createPaymentMethod(data: CreatePaymentMethod): Observable<PaymentMethod[]> {
-    const user = this.getUserId();
-    const payload = {
-      user,
-      ...data,
-    };
-    return this.http.post(this.baseUrl, payload).pipe(
-      switchMap(
-        () => this.getPaymentMethodsByUser(user)),
-        tap((updatedData) => {
-          this.paymentSubject.next(updatedData);
-        })
-      
+  addPaymentMethod(payment: PaymentMethod): Observable<PaymentMethod[]> {
+    const id = this.getUserId();
+    if (!id) {
+      return of([]);
+    }
+    const data = { ...payment, user: id };
+    return this.http.post(`${this.baseUrl}`, data).pipe(
+      switchMap(() => this.getPayMethodbyUser(id)),
+      tap((udatedPayments) => {
+        this.toast.success('metodo de pago agregado');
+        this.paymetMethodListSubject.next(udatedPayments);
+      })
     );
   }
 
-  // 1,3,4,5,6,7,8,9,0
-  updatePaymentMethod(
-    updatedPaymentmethodData: UpdatePaymentMethod
-  ): Observable<PaymentMethod[]> {
-    const userId = this.getUserId();
-    return this.http
-      .put(
-        `${this.baseUrl}/${updatedPaymentmethodData._id}`,
-        updatedPaymentmethodData
-      )
-      .pipe(
-        switchMap(() => this.getPaymentMethodsByUser(userId)),
-        tap((updatedData) => {
-          this.paymentSubject.next(updatedData);
-        })
-      );
+  editPaymentMethod(payment: PaymentMethod) {
+    const id = this.getUserId()
+    if (!id) {
+      return of([]);
+    }
+    return this.http.put(`${this.baseUrl}/${payment._id}`, payment).pipe(
+      switchMap(() => this.getPayMethodbyUser(id)),
+      tap((udatedPayments) => {
+        this.toast.success('metodo de pago actualizado');
+        this.paymetMethodListSubject.next(udatedPayments);
+      })
+    );
+  }
+
+  deletePaymentMethod(id: string) {
+    const userId = this.getUserId()
+    if (!userId) {
+      return of([]);
+    }
+    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
+      switchMap(() => this.getPayMethodbyUser(userId)),
+      tap((udatedPayments) => {
+        this.toast.success('metodo pago eliminado');
+      
+        this.paymetMethodListSubject.next(udatedPayments ?? []);
+      }),
+      catchError(error => {
+        console.error('Error deleting payment method:', error);
+        this.paymetMethodListSubject.next([]);
+        return of([]);
+      })
+    );
   }
 }
