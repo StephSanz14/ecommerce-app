@@ -11,7 +11,7 @@ import { OrderService } from '../../../core/services/order/order.service';
 import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../core/services/toast/toast.service';
 import { selectUserId } from '../../../core/store/auth/auth.selectors';
-import { ShippingAddressComponent } from '../shipping-address/shipping-address.component';
+import { ShippingAddressComponent } from '../shipping-address/shippingAddress.component';
 import { PaymentMethodsListComponent } from "../../../components/payment/payment-methods-list/payment-methods-list.component";
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { AsyncPipe } from '@angular/common';

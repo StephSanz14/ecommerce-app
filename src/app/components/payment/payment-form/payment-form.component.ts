@@ -11,7 +11,7 @@ import { FormErrorService } from '../../../core/services/validation/form-error.s
   templateUrl: './payment-form.component.html',
   styleUrl: './payment-form.component.css'
 })
-export class PaymentFormComponent implements OnChanges {
+export class PaymentFormComponent implements OnChanges { 
   @Input() payment: PaymentMethod | null = null;
   @Input() isEditMode: boolean = false;
   @Output() paymentSaved = new EventEmitter<PaymentMethod>();

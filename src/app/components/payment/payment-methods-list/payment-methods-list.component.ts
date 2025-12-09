@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core'; 
 import { PaymentMethod } from '../../../core/types/PaymentMethod';
 import { PaymentMethodsCardComponent } from '../payment-methods-card/payment-methods-card.component';
 import { AsyncPipe } from '@angular/common';

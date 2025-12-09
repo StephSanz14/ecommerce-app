@@ -4,7 +4,7 @@ import { PaymentFormComponent } from "../../../components/payment/payment-form/p
 import { PaymentService } from '../../../core/services/paymentMethods/payment-methods.service';
 import { Observable, of } from 'rxjs';
 import { PaymentMethod } from '../../../core/types/PaymentMethod';
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common'; 
 
 @Component({
   selector: 'app-paymethods',

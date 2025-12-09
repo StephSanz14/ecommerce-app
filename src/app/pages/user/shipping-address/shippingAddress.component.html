@@ -1,0 +1,41 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Direcciones de envío</h1>
+
+    <button
+      (click)="onAddNew()"
+      class="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded transition-colors duration-200 flex items-center gap-2">
+      <span class="text-xl">+</span> Agregar nueva
+    </button>
+  </div>
+
+  @if (shippingAddresses$ | async; as shippingAddresses) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- LISTA (izquierda, 2/3) -->
+      <div class="lg:col-span-2">
+        <app-shippingAdress-list
+          [shippingAdresses]="shippingAddresses"
+          [isEditable]="true"
+          [isSelectable]="false"
+          (edit)="onEdit($event)"
+          (delete)="onDelete($event)">
+        </app-shippingAdress-list>
+      </div>
+
+      <!-- FORM (derecha, 1/3) -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+          <h2 class="text-xl font-semibold mb-4 text-gray-800">
+            {{ isEditing ? 'Editar dirección de envío' : 'Nueva dirección de envío' }}
+          </h2>
+
+          <app-shippingAdress-form
+            [address]="selectedAddress"
+            [isEditMode]="isEditing"
+            (addressSaved)="onAddressSaved($event)">
+          </app-shippingAdress-form>
+        </div>
+      </div>
+    </div>
+  }
+</div>

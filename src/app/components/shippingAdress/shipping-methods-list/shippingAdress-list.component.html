@@ -1,0 +1,13 @@
+<div class="grid gap-4">
+  @for (item of shippingAdresses; track item._id) {
+    <app-shippingAdress-card
+      [shippingAdress]="item"
+      [isEditable]="isEditable"
+      [isSelectable]="isSelectable"
+      [isSelected]="selectedId === item._id"
+      (edit)="onEdit($event)"
+      (delete)="onDelete($event)"
+      (select)="onSelect($event)">
+    </app-shippingAdress-card>
+  }
+</div>

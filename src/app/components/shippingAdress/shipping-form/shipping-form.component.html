@@ -1,0 +1,132 @@
+<div class="bg-white shadow rounded-lg p-6">
+  <h2 class="text-xl font-semibold mb-4">Dirección de envío</h2>
+
+  <form [formGroup]="shippingForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <!-- Nombre / alias de la dirección -->
+    <app-form-field
+      label="Nombre de la dirección"
+      fieldId="name"
+      type="text"
+      placeholder="Casa, Trabajo, Departamento de mamá"
+      [required]="true"
+      [errorMessage]="getFieldError('name')"
+      formControlName="name">
+    </app-form-field>
+
+    <!-- Dirección, ciudad, estado -->
+    <app-form-field
+      label="Dirección"
+      fieldId="address"
+      type="text"
+      placeholder="Calle, número, colonia"
+      [required]="true"
+      [errorMessage]="getFieldError('address')"
+      formControlName="address">
+    </app-form-field>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <app-form-field
+        label="Ciudad"
+        fieldId="city"
+        type="text"
+        placeholder="Ciudad"
+        [required]="true"
+        [errorMessage]="getFieldError('city')"
+        formControlName="city">
+      </app-form-field>
+
+      <app-form-field
+        label="Estado"
+        fieldId="state"
+        type="text"
+        placeholder="Estado"
+        [required]="true"
+        [errorMessage]="getFieldError('state')"
+        formControlName="state">
+      </app-form-field>
+    </div>
+
+    <!-- CP, país, teléfono -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <app-form-field
+        label="Código postal"
+        fieldId="postalCode"
+        type="text"
+        placeholder="CP"
+        [required]="true"
+        [errorMessage]="getFieldError('postalCode')"
+        formControlName="postalCode">
+      </app-form-field>
+
+      <app-form-field
+        label="País"
+        fieldId="country"
+        type="text"
+        placeholder="México"
+        [required]="true"
+        [errorMessage]="getFieldError('country')"
+        formControlName="country">
+      </app-form-field>
+
+      <app-form-field
+        label="Teléfono de contacto"
+        fieldId="phone"
+        type="text"
+        placeholder="55 1234 5678"
+        [required]="true"
+        [errorMessage]="getFieldError('phone')"
+        formControlName="phone">
+      </app-form-field>
+    </div>
+
+    <!-- Tipo de dirección -->
+    <div class="pt-2">
+      <label class="block text-sm font-medium text-gray-700 mb-3">
+        Tipo de dirección *
+      </label>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <label
+          class="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-gray-50">
+          <input type="radio" formControlName="addressType" value="home" />
+          Casa
+        </label>
+
+        <label
+          class="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-gray-50">
+          <input type="radio" formControlName="addressType" value="work" />
+          Trabajo
+        </label>
+
+        <label
+          class="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-gray-50">
+          <input type="radio" formControlName="addressType" value="other" />
+          Otra
+        </label>
+      </div>
+      @if (getFieldError('addressType')) {
+        <p class="mt-1 text-sm text-red-600">
+          {{ getFieldError('addressType') }}
+        </p>
+      }
+    </div>
+
+    <!-- Predeterminada -->
+    <div class="pt-2">
+      <label class="inline-flex items-center gap-2 cursor-pointer">
+        <input type="checkbox" formControlName="isDefault" />
+        <span class="text-sm text-gray-700">
+          Usar como dirección predeterminada
+        </span>
+      </label>
+    </div>
+
+    <!-- Botón submit -->
+    <button
+      type="submit"
+      [disabled]="!shippingForm.valid"
+      class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+    >
+      {{ isEditMode ? 'Actualizar dirección' : 'Agregar dirección de envío' }}
+    </button>
+  </form>
+</div>
