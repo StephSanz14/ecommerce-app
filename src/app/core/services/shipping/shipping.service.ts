@@ -67,17 +67,25 @@ export class ShippingAddressService {
 
   // 🔹 COINCIDE CON router.get('/', authMiddleware, getUserAddresses);
   getShippingAddresses(): Observable<ShippingAddress[]> {
-    return this.http.get(this.baseUrl).pipe(
-      map((data) => {
-        const response = ShippingAddressArraySchema.safeParse(data);
-        if (!response.success) {
-          console.log(response.error);
-          return [];
-        }
-        return response.data;
-      })
-    );
-  }
+  return this.http.get(this.baseUrl).pipe(
+    map((data: any) => {
+      // 👇 Intentamos detectar dónde viene el array
+      const rawArray =
+        Array.isArray(data)
+          ? data
+          : data.addresses ?? data.data ?? [];
+
+      const response = ShippingAddressArraySchema.safeParse(rawArray);
+
+      if (!response.success) {
+        console.log(response.error);
+        return [];
+      }
+
+      return response.data;
+    })
+  );
+}
 
   // 🔹 COINCIDE CON router.post('/', addressValidations, validate, authMiddleware, createShippingAddress);
   AddShippingAddress(address: ShippingAddress): Observable<ShippingAddress[]> {
