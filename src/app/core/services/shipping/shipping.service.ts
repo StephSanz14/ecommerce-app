@@ -69,20 +69,25 @@ export class ShippingAddressService {
   getShippingAddresses(): Observable<ShippingAddress[]> {
   return this.http.get(this.baseUrl).pipe(
     map((data: any) => {
-      // 👇 Intentamos detectar dónde viene el array
-      const rawArray =
-        Array.isArray(data)
-          ? data
-          : data.addresses ?? data.data ?? [];
+      console.log('RAW shipping response:', data);
 
-      const response = ShippingAddressArraySchema.safeParse(rawArray);
+      // 👇 Si viene como { addresses: [...] } lo tomamos de ahí
+      const raw = Array.isArray(data) 
+        ? data 
+        : data.addresses ?? data.data ?? data.results ?? [];
+
+      const response = ShippingAddressArraySchema.safeParse(raw);
 
       if (!response.success) {
-        console.log(response.error);
+        console.error('Zod error en ShippingAddressArraySchema:', response.error);
         return [];
       }
 
       return response.data;
+    }),
+    catchError((error) => {
+      console.error('Error getting shipping addresses:', error);
+      return of([]);
     })
   );
 }
@@ -143,3 +148,4 @@ export class ShippingAddressService {
     );
   }
 }
+

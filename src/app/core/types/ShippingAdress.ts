@@ -6,7 +6,7 @@ export type AddressType = z.infer<typeof AddressTypeSchema>;
 export const ShippingAddressSchema = z.object({
   _id: z.string().min(1, 'El ID es requerido'),
 
-  user: z.string().min(1, 'El usuario es requerido'),
+  user: z.string().min(1, 'El usuario es requerido'), 
 
   name: z
     .string()
