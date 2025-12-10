@@ -36,6 +36,7 @@ export class CheckOutComponent implements OnInit{
   paymenthMethods$ : Observable<PaymentMethod[]> = of([]);
   paymenthMethodId: string = '';
 
+
   total = computed(
     ()=>
       this.cartSignal()?.products.reduce(
@@ -83,8 +84,8 @@ export class CheckOutComponent implements OnInit{
       products: cart.products.map(p=>({productId:p.product._id, quantity:p.quantity, price:p.product.price})),
       totalPrice: this.total(), 
       status:'pending',
-      shippingAdress:'689a09119550ee3e8602145d',
-      paymentMethod: this.paymenthMethodId,
+      shippingAdress:'689a09119550ee3e8602145d', 
+      paymentMethod: '6934f0efba03f09601601927',
       shippingCost: 0,
     } as unknown as Order;
 

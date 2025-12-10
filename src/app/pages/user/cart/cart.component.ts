@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './cart.component.css',
 })
 export class CartComponent implements OnInit {
-  cart$: Observable<Cart | null> = of(null);
+  cart$: Observable<Cart | null> = of(null); 
   cartTotal$: Observable<number> = of(0);
   cartItemCount$: Observable<number> = of(0);
   constructor(private cartService: CartService) {}
