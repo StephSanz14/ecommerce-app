@@ -28,6 +28,6 @@ export const cartProductSchema = z.object({
     description: z.string().optional(),
     price: z.number(),
     imageUrl: z.array(z.string()).default([]),
-    stock: z.number(),
+    stock: z.number().optional().default(0),
     category: z.string(),
 });

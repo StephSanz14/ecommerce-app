@@ -36,7 +36,7 @@ export const selectAuthError = createSelector(
 );
 
 // Derived selectors
-export const selectUserId = createSelector(
+export const selectUserId = createSelector( 
   selectDecodedToken,
   (decodedToken) => decodedToken?.userId ?? null
 );

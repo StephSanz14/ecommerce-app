@@ -65,6 +65,7 @@ export class ProductDetailComponent implements OnInit{
 
   addToWishlist(): void { 
   if (!this.product) return;
+  if (this.product.stock === 0) return;
 
   this.loading = true;
 

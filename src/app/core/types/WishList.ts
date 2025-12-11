@@ -9,7 +9,7 @@ export const wishListItemSchema = z.object({
 
 export const wishListSchema = z.object({
   _id: z.string(),
-  user: userSchema,
+  user: z.string(),
   products: z.array(wishListItemSchema),
 });
 

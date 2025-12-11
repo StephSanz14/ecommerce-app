@@ -6,12 +6,15 @@ import {
   Observable,
   of,
   switchMap,
+  take,
   tap,
 } from 'rxjs';
 import { WishList, wishListSchema } from '../../types/WishList';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../toast/toast.service';
 import { environment } from '../../../../environments/environment';
+import { Store } from '@ngrx/store';
+import { selectUserId } from '../../store/auth/auth.selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -24,44 +27,49 @@ export class WishlistService {
 
   constructor(
     private http: HttpClient,
-    private toast: ToastService
+    private toast: ToastService,
+    private store: Store
   ) {
-    // Cargar wishlist al crear el servicio (si el usuario está logueado
-    // y el token es válido, authMiddleware en el backend lo identificará)
     this.loadWishlist();
   }
 
-  // =========================
-  //   Cargar wishlist actual
-  // =========================
-  loadWishlist(): void {
-    this.http.get(`${this.baseUrl}`).pipe(
-      map((data: any) => {
-        // Tu controlador aparentemente responde algo como { wishList: ... }
+  private getUserId(): string {
+    let userId = '';
+    this.store
+      .select(selectUserId)
+      .pipe(take(1))
+      .subscribe((id) => (userId = id ?? ''));
+    return userId;
+  }
+
+  // Obtener wishlist del usuario
+  loadWishlist() {
+    const userId = this.getUserId();
+    if (!userId) {
+      this.wishlistSubject.next(null);
+      return;
+    }
+
+    this.http.get(`${this.baseUrl}`).subscribe({
+      next: (data: any) => {
         const parsed = wishListSchema.safeParse(data.wishList);
         if (!parsed.success) {
-          console.log('Error validando wishlist:', parsed.error);
-          return null;
+          console.log(parsed.error);
+          this.wishlistSubject.next(null);
+          return;
         }
-        return parsed.data;
-      }),
-      catchError(err => {
-        console.error('Error al cargar wishlist:', err);
-        return of(null);
-      })
-    ).subscribe((wishList) => {
-      this.wishlistSubject.next(wishList);
+        this.wishlistSubject.next(parsed.data);
+      },
+      error: () => this.wishlistSubject.next(null),
     });
   }
 
-  // =========================
-  //   Agregar producto
-  // =========================
+  // Agregar a wishlist
   addToWishlist(productId: string): Observable<WishList | null> {
     return this.http
-      .post(`${this.baseUrl}/add`, { productId }) // POST /api/wishlist/add
+      .post(`${this.baseUrl}/add`, { productId })
       .pipe(
-        switchMap(() => this.http.get(`${this.baseUrl}`)),   // GET /api/wishlist
+        switchMap(() => this.http.get(`${this.baseUrl}`)),
         map((data: any) => {
           const parsed = wishListSchema.safeParse(data.wishList);
           return parsed.success ? parsed.data : null;
@@ -72,21 +80,16 @@ export class WishlistService {
             this.wishlistSubject.next(updated);
           }
         }),
-        catchError((err) => {
-          console.error('Error al agregar a wishlist:', err);
-          return of(null);
-        })
+        catchError(() => of(null))
       );
   }
 
-  // =========================
-  //   Eliminar producto
-  // =========================
+  // Eliminar producto
   removeFromWishlist(productId: string): Observable<WishList | null> {
     return this.http
-      .delete(`${this.baseUrl}/remove/${productId}`) // DELETE /api/wishlist/remove/:productId
+      .delete(`${this.baseUrl}/remove/${productId}`)
       .pipe(
-        switchMap(() => this.http.get(`${this.baseUrl}`)),   // GET /api/wishlist
+        switchMap(() => this.http.get(`${this.baseUrl}`)),
         map((data: any) => {
           const parsed = wishListSchema.safeParse(data.wishList);
           return parsed.success ? parsed.data : null;
@@ -96,54 +99,25 @@ export class WishlistService {
             this.toast.success('Producto eliminado de la lista de deseos');
             this.wishlistSubject.next(updated);
           }
-        }),
-        catchError((err) => {
-          console.error('Error al eliminar de wishlist:', err);
-          return of(null);
         })
       );
   }
 
-  // =========================
-  //   Vaciar wishlist
-  // =========================
   clearWishlist(): Observable<WishList | null> {
-    return this.http
-      .delete(`${this.baseUrl}/clear`) // DELETE /api/wishlist/clear
-      .pipe(
-        tap(() => {
-          this.wishlistSubject.next(null);
-          this.toast.success('Lista de deseos vaciada');
-        }),
-        map(() => null),
-        catchError((err) => {
-          console.error('Error al vaciar wishlist:', err);
-          return of(null);
-        })
-      );
+    return this.http.delete(`${this.baseUrl}/clear`).pipe(
+      tap(() => {
+        this.wishlistSubject.next(null);
+        this.toast.success('Lista de deseos vaciada');
+      }),
+      map(() => null)
+    );
   }
 
-  // =========================
-  //   Verificar producto
-  // =========================
+  // Verifica si un producto está en la wishlist
   isInWishlist(productId: string): Observable<boolean> {
-    return this.http
-      .get(`${this.baseUrl}/check/${productId}`) // GET /api/wishlist/check/:productId
-      .pipe(
-        map((data: any) => data.inWishList ?? false),
-        catchError((err) => {
-          console.error('Error al verificar wishlist:', err);
-          return of(false);
-        })
-      );
-  }
-
-  // =========================
-  //   Contador de productos
-  // =========================
-  getItemCount(): Observable<number> {
-    return this.wishlist$.pipe(
-      map((wl) => wl?.products.length ?? 0)
+    return this.http.get(`${this.baseUrl}/check/${productId}`).pipe(
+      map((data: any) => data.inWishList ?? false),
+      catchError(() => of(false))
     );
   }
 }
