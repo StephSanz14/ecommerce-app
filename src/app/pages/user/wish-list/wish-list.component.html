@@ -59,7 +59,7 @@
             >
               <!-- Imagen del producto -->
               <img
-                [src]="item.product.imageUrl?.[0] || 'https://via.placeholder.com/100'"
+                [src]="item.product.imageUrl[0] || 'https://via.placeholder.com/100'"
                 [alt]="item.product.name"
                 class="w-24 h-24 object-cover rounded-lg"
               />
