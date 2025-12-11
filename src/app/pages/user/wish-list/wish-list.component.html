@@ -1,1 +1,184 @@
-<p>wish-list works!</p>
+<div class="container mx-auto px-4 py-8">
+  @if (wishlist$ | async; as wishlist) {
+
+    <!-- Empty Wishlist -->
+    @if (!wishlist || wishlist.products.length === 0) {
+      <div class="text-center py-12">
+        <svg
+          class="w-24 h-24 mx-auto text-gray-400"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
+          />
+        </svg>
+        <h2 class="text-2xl font-bold text-gray-800 mt-4">
+          Tu lista de deseos está vacía
+        </h2>
+        <p class="text-gray-600 mt-2">
+          Guarda tus productos favoritos para verlos más tarde
+        </p>
+        <a
+          routerLink="/products"
+          class="inline-block mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Ir a productos
+        </a>
+      </div>
+    } @else {
+
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h1 class="text-3xl font-bold text-gray-900">Mi lista de deseos</h1>
+            <p class="text-gray-600 mt-1">
+              {{ wishlist.products.length }} productos guardados
+            </p>
+          </div>
+          <button
+            (click)="clear()"
+            class="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+          >
+            Vaciar lista
+          </button>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
+          <div
+            *ngFor="let item of wishlist.products"
+            class="border-b border-gray-200 last:border-b-0"
+          >
+            <div
+              class="p-6 flex items-center gap-6 cursor-pointer hover:bg-gray-50 transition-colors"
+              [routerLink]="['/product-view', item.product._id]"
+            >
+              <!-- Imagen del producto -->
+              <img
+                [src]="item.product.imageUrl?.[0] || 'https://via.placeholder.com/100'"
+                [alt]="item.product.name"
+                class="w-24 h-24 object-cover rounded-lg"
+              />
+
+              <!-- Info del producto -->
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  {{ item.product.name }}
+                </h3>
+                <p class="text-sm text-gray-600 mt-1">
+                  {{ item.product.description }}
+                </p>
+
+                <div class="mt-2 flex items-center gap-2">
+                  <span
+                    *ngIf="item.product.stock === 0"
+                    class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full"
+                  >
+                    Agotado
+                  </span>
+                  <span
+                    *ngIf="item.product.stock > 0 && item.product.stock <= 5"
+                    class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full"
+                  >
+                    Pocas unidades
+                  </span>
+                  <span
+                    *ngIf="item.addedAt"
+                    class="text-xs text-gray-400"
+                  >
+                    Agregado: {{ item.addedAt | date:'mediumDate' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Precio -->
+              <div class="text-right">
+                <p class="text-lg font-bold text-gray-900">
+                  ${{ item.product.price || 0 | number : '1.2-2' }}
+                </p>
+                <p class="text-sm text-gray-600">
+                  Precio unitario
+                </p>
+              </div>
+
+              <!-- Botón quitar -->
+              <button
+                (click)="$event.stopPropagation(); remove(item.product._id || '')"
+                class="text-red-600 hover:text-red-800 transition-colors"
+              >
+                <svg
+                  class="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary simple para wishlist -->
+        <div class="bg-white rounded-lg shadow-sm p-6">
+          <p class="text-gray-700 mb-4">
+            Tienes {{ wishlist.products.length }} producto(s) en tu lista de deseos.
+          </p>
+
+          <button
+            routerLink="/cart"
+            class="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+          >
+            Ver carrito
+          </button>
+
+          <button
+            routerLink="/products"
+            class="w-full mt-3 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Seguir explorando productos
+          </button>
+        </div>
+      </div>
+    }
+
+  } @else {
+    <!-- Fallback si aún no llega el observable -->
+    <div class="text-center py-12">
+      <svg
+        class="w-24 h-24 mx-auto text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364l-7.682-7.682a4.5 4.5 0 010-6.364z"
+        />
+      </svg>
+      <h2 class="text-2xl font-bold text-gray-800 mt-4">
+        Tu lista de deseos está vacía
+      </h2>
+      <p class="text-gray-600 mt-2">
+        Guarda productos para verlos aquí
+      </p>
+      <a
+        routerLink="/products"
+        class="inline-block mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        Ir a productos
+      </a>
+    </div>
+  }
+</div>
