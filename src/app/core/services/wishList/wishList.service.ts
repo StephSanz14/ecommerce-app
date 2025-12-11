@@ -65,8 +65,12 @@ this.http.get(`${this.baseUrl}`).subscribe({
 
   // Agregar a wishlist
   addToWishlist(productId: string): Observable<WishList | null> {
+    const userId = this.getUserId();
+    if (!userId) {
+      return of(null);
+    } 
     return this.http
-        .post(`${this.baseUrl}/add`, { productId })
+    .post(`${this.baseUrl}/${userId}/add`, { productId }) 
       .pipe(
         switchMap(() => this.http.get(`${this.baseUrl}`)),
         map((data: any) => {
