@@ -4,6 +4,7 @@ import { ProductsService } from '../../core/services/products/products.service';
 import { ActivatedRoute } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { CartService } from '../../core/services/cart/cart.service';
+import { WishlistService } from '../../core/services/wishList/wishList.service';
 import { take } from 'rxjs';
 
 
@@ -18,9 +19,9 @@ export class ProductDetailComponent implements OnInit{
   product: Product | null = null;
   loading = false; 
 
-  constructor(private productService: ProductsService, private route: ActivatedRoute, private cartService: CartService){}
+  constructor(private productService: ProductsService, private route: ActivatedRoute, private cartService: CartService, private wishlistService: WishlistService){}
 
-  ngOnInit(): void { 
+  ngOnInit(): void {  
     this.route.paramMap.subscribe({
       next:(params)=>{
         console.log(params)
@@ -51,7 +52,7 @@ export class ProductDetailComponent implements OnInit{
     this.cartService
       .addToCart(this.product._id)
       .pipe(take(1))
-      .subscribe({
+      .subscribe({ 
         next: () => {
           this.loading = false;
         },
@@ -61,5 +62,24 @@ export class ProductDetailComponent implements OnInit{
         },
       });
   }
+
+  addToWishlist(): void {
+  if (!this.product) return;
+
+  this.loading = true;
+
+  this.wishlistService
+    .addToWishlist(this.product._id)
+    .pipe(take(1))
+    .subscribe({
+      next: () => {
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.loading = false;
+      },
+    });
+}
 
 }
