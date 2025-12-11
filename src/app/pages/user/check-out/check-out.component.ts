@@ -1,6 +1,6 @@
 import { Component, computed, OnInit, signal } from '@angular/core';
 import { Cart } from '../../../core/types/Cart';
-import { Observable, of, take } from 'rxjs';
+import { filter, Observable, of, take } from 'rxjs';
 import { PaymentMethod } from '../../../core/types/PaymentMethod';
 import { ofType } from '@ngrx/effects';
 import { PaymentService } from '../../../core/services/paymentMethods/payment-methods.service';
@@ -66,14 +66,19 @@ export class CheckOutComponent implements OnInit{
       return;
     }
     this.cartService.cart$.subscribe(cart=>this.cartSignal.set(cart));
+
+
     this.paymentService.loadPayMethods();
 
     this.paymenthMethods$ = this.paymentService.paymetMethods$;
 
-     this.paymenthMethods$.pipe(take(1)).subscribe(payments => {
-    if (payments.length > 0) {
-      this.paymenthMethodId = payments[0]._id; 
-    }
+     this.paymenthMethods$
+  .pipe(
+    filter((payments) => payments.length > 0),
+    take(1)
+  )
+  .subscribe((payments) => {
+    this.paymenthMethodId = payments[0]._id;
   });
     
     this.shippingAddress$ = this.shippingAddressService.getShippingAddresses();
