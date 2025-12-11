@@ -63,7 +63,7 @@ export class ProductDetailComponent implements OnInit{
       });
   }
 
-  addToWishlist(): void {
+  addToWishlist(): void { 
   if (!this.product) return;
 
   this.loading = true;
