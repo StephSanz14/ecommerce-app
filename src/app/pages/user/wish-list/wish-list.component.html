@@ -58,9 +58,6 @@
               [routerLink]="['/product-view', item.product._id]"
             >
               <!-- Imagen del producto -->
-               <p class="text-xs text-red-600 break-all">
-              IMG: {{ item.product.imageUrl?.[0] }}
-              </p>
               <img
                 [src]="item.product.imageUrl[0] || 'https://via.placeholder.com/100'"
                 [alt]="item.product.name"
