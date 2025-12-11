@@ -40,7 +40,9 @@
         class="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-60 overflow-y-auto"
       >
         @for (product of products; track $index) {
-        <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+        <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer"
+        [routerLink]="['/product-view', product._id]"
+        >
           <div class="w-12 h-12 bg-gray-200 rounded flex-shrink-0"></div>
           <div class="flex-1 min-w-0">
             <h4 class="text-sm text-gray-500 truncate">{{product.name}}</h4>
