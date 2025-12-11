@@ -1,6 +1,3 @@
-<pre class="text-xs bg-gray-100 p-2 rounded block">
-  {{ wishlist$ | async | json }}
-</pre>
 <div class="container mx-auto px-4 py-8">
   @if (wishlist$ | async; as wishList) {
 
@@ -75,37 +72,24 @@
                 <p class="text-sm text-gray-600 mt-1">
                   {{ item.product.description }}
                 </p>
-
-                <div class="mt-2 flex items-center gap-2">
-                  <span
-                    *ngIf="item.product.stock === 0"
-                    class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full"
-                  >
-                    Agotado
-                  </span>
-                  <span
-                    *ngIf="item.product.stock > 0 && item.product.stock <= 5"
-                    class="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full"
-                  >
-                    Pocas unidades
-                  </span>
-                  <span
-                    *ngIf="item.addedAt"
-                    class="text-xs text-gray-400"
-                  >
-                    Agregado: {{ item.addedAt | date:'mediumDate' }}
-                  </span>
-                </div>
               </div>
 
               <!-- Precio -->
-              <div class="text-right">
+              <div class="text-right mr-4">
                 <p class="text-lg font-bold text-gray-900">
                   ${{ item.product.price || 0 | number : '1.2-2' }}
                 </p>
                 <p class="text-sm text-gray-600">
                   Precio unitario
                 </p>
+
+                <!-- Botón agregar al carrito -->
+                <button
+                  (click)="$event.stopPropagation(); addToCart(item.product._id || '')"
+                  class="mt-3 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Agregar al carrito
+                </button>
               </div>
 
               <!-- Botón quitar -->
