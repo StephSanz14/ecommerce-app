@@ -43,7 +43,7 @@
         <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer"
         [routerLink]="['/product-view', product._id]"
         >
-          <div class="w-12 h-12 bg-gray-200 rounded flex-shrink-0"></div>
+          <img [src]="product.imageUrl" [alt]="product.name" class="w12 h12 rounded object-cover flex-shrink:0">
           <div class="flex-1 min-w-0">
             <h4 class="text-sm text-gray-500 truncate">{{product.name}}</h4>
             <p class="text-sm text-gray-500">{{product.price}}</p>
