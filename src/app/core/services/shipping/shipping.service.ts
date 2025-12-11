@@ -71,7 +71,6 @@ export class ShippingAddressService {
     map((data: any) => {
       console.log('RAW shipping response:', data);
 
-      // 👇 Si viene como { addresses: [...] } lo tomamos de ahí
       const raw = Array.isArray(data) 
         ? data 
         : data.addresses ?? data.data ?? data.results ?? [];

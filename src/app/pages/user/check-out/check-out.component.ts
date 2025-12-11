@@ -12,9 +12,11 @@ import { Router, RouterLink } from '@angular/router';
 import { ToastService } from '../../../core/services/toast/toast.service';
 import { selectUserId } from '../../../core/store/auth/auth.selectors';
 import { ShippingAddressComponent } from '../shipping-address/shippingAddress.component';
+import { ShippingAddressService } from '../../../core/services/shipping/shipping.service';
 import { PaymentMethodsListComponent } from "../../../components/payment/payment-methods-list/payment-methods-list.component";
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { AsyncPipe } from '@angular/common';
+import { ShippingAddress } from '../../../core/types/ShippingAdress';
 @Component({
   selector: 'app-check-out',
   standalone: true,
@@ -35,6 +37,8 @@ export class CheckOutComponent implements OnInit{
 
   paymenthMethods$ : Observable<PaymentMethod[]> = of([]);
   paymenthMethodId: string = '';
+  shippingAddress$: Observable<ShippingAddress[]> = of([]);
+  shippingAddressId: string = '';
 
 
   total = computed(
@@ -52,6 +56,7 @@ export class CheckOutComponent implements OnInit{
       private orderservice:OrderService,
       private router: Router,
       private toast:ToastService,
+      private shippingAddressService: ShippingAddressService
     ){}
 
 
@@ -63,7 +68,22 @@ export class CheckOutComponent implements OnInit{
     this.cartService.cart$.subscribe(cart=>this.cartSignal.set(cart));
     this.paymentService.loadPayMethods();
 
-    this.paymenthMethods$ = this.paymenthMethods$;
+    this.paymenthMethods$ = this.paymentService.paymetMethods$;
+
+     this.paymenthMethods$.pipe(take(1)).subscribe(payments => {
+    if (payments.length > 0) {
+      this.paymenthMethodId = payments[0]._id; 
+    }
+  });
+    
+    this.shippingAddress$ = this.shippingAddressService.getShippingAddresses();
+
+  this.shippingAddress$.pipe(take(1)).subscribe(addresses => {
+    if (addresses.length > 0) {
+      this.shippingAddressId = addresses[0]._id; 
+    }
+  });
+
   }
 
   onPaymenthMethodSelected(id:string){
@@ -86,7 +106,7 @@ export class CheckOutComponent implements OnInit{
       status:'pending',
       /* shippingAddress:'689a09119550ee3e8602145d', 
       paymentMethod: '6934f0efba03f09601601927', */
-      shippingAddress:'689a09119550ee3e8602145d', 
+      shippingAddress: this.shippingAddressId, 
       paymentMethod: this.paymenthMethodId,
       shippingCost: 0,
     } as unknown as Order;
