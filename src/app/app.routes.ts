@@ -7,7 +7,7 @@ import { formGuard } from './core/guards/form/form.guard';
 
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, title: 'Home' },
+  { path: '', component: HomeComponent, title: 'Home', pathMatch: 'full' },
   {
     path: 'products',
     loadComponent: () =>
@@ -43,6 +43,8 @@ export const routes: Routes = [
   {
     path:'thank-you-page',
     loadComponent:() => import('../app/pages/thank-you/thank-you.component').then(c=> c.ThankYouComponent)
-  }
+  },
+
+  { path: '**', redirectTo: '' },
 
 ];
