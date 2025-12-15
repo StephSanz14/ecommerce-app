@@ -13,8 +13,8 @@ describe('E2E: login and add a product to cart', () => {
     cy.get('input[type="email"]')
       .should('exist')
       .clear()
-      .type('finux@finux.com');
-    cy.get('input[type="password"]').should('exist').clear().type('finux123');
+      .type('cypress1765701087188@example.com');
+    cy.get('input[type="password"]').should('exist').clear().type('Test12345!');
     cy.get('button[type="submit"]').should('exist').click();
 
     cy.wait('@loginRequest', { timeout: 10000 }).then((interception) => {

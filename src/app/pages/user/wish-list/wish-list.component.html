@@ -41,7 +41,7 @@
             </p>
           </div>
           <button
-            (click)="clear()"
+            (click)="clear()" 
             class="px-4 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
           >
             Vaciar lista
@@ -51,6 +51,7 @@
         <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-6">
           <div
             *ngFor="let item of wishList.products"
+              data-cy="wishlist-item"
             class="border-b border-gray-200 last:border-b-0"
           >
             <div
